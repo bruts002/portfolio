@@ -1,4 +1,5 @@
 const http = require('http');
+const fs = require('fs');
 const { parse } = require('querystring');
 
 const PORT = 8080;
@@ -19,30 +20,46 @@ const CORS_HEADERS = {
     'Access-Control-Allow-Credentials': true
 };
 
-http.createServer((request, response) => {
-    const qIndex = request.url.indexOf('?');
-    const url = qIndex !== -1 ?
-        request.url.slice(0, qIndex) :
-        request.url;
-    request.queryParams = qIndex !== -1 ?
-        parse(request.url.slice(qIndex+1)) :
-        {};
+const LIVE_DB_PATH = './data/live.db';
+const BASE_DB_PATH = './data.base.db';
 
-    switch (url) {
-        case '/feed':
-        case '/stream':
-            addClient(request, response);
-            break;
-        case '/publish':
-            parsePostData(request, data => {
-                handleEvent(data, response);
-            });
-            break;
-        default:
-            unknownEndpoint(request, response);
-            break;
-    } 
-}).listen(PORT);
+fs.access(LIVE_DB_PATH, err => {
+    if (err) {
+        fs.createReadStream(BASE_DB_PATH)
+            .pipe(fs.createWriteStream(LIVE_DB_PATH));
+    } else {
+        startServer();
+    }
+});
+
+// make sure live.db exists
+// then start server
+
+const startServer = () => {
+    http.createServer((request, response) => {
+        const qIndex = request.url.indexOf('?');
+        const url = qIndex !== -1 ?
+            request.url.slice(0, qIndex) :
+            request.url;
+        request.queryParams = qIndex !== -1 ?
+            parse(request.url.slice(qIndex+1)) :
+            {};
+
+        switch (url) {
+            case '/stream':
+                addClient(request, response);
+                break;
+            case '/publish':
+                parsePostData(request, data => {
+                    handleEvent(data, response);
+                });
+                break;
+            default:
+                unknownEndpoint(request, response);
+                break;
+        } 
+    }).listen(PORT);
+};
 
 function broadcast({
     event = EVENTS.UNKNOWN,
