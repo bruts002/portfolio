@@ -88,6 +88,20 @@ const startServer = () => {
     }).listen(PORT);
 };
 
+function shareAllUsers(response) {
+    Object
+        .keys(clients)
+        .forEach( clientId => {
+            response.write(serializeMessage({
+                data: {
+                    id: clientId,
+                    name: clientId,
+                },
+                event: EVENTS.USER_JOIN
+            }));
+        });
+}
+
 function broadcast({
     event = EVENTS.UNKNOWN,
     data,
@@ -116,7 +130,10 @@ function addClient(request, response) {
         'Cache-Control': 'no-cache',
     }));
 
+    shareAllUsers(response);
+    // TODO: send ten last messages
     clients[clientId] = response;
+
     handleEvent({
         event: EVENTS.USER_JOIN,
         data: {
