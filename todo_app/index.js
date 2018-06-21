@@ -2,8 +2,12 @@ const http = require('http');
 const fs = require('fs');
 const { parse } = require('querystring');
 
+const AppDAO = require('./dao');
+let dao;
+const EventModel = require('./EventsModel');
+let eventModel;
+
 const PORT = 8080;
-let globalCounter = 1;
 let clients = {};
 
 const EVENTS = {
@@ -21,19 +25,42 @@ const CORS_HEADERS = {
 };
 
 const LIVE_DB_PATH = './data/live.db';
-const BASE_DB_PATH = './data.base.db';
+const BASE_DB_PATH = './data/base.db';
 
 fs.access(LIVE_DB_PATH, err => {
     if (err) {
-        fs.createReadStream(BASE_DB_PATH)
-            .pipe(fs.createWriteStream(LIVE_DB_PATH));
+        copyFile(BASE_DB_PATH, LIVE_DB_PATH)
+            .then(connectToDatabase)
+            .then(startServer);
     } else {
-        startServer();
+        connectToDatabase()
+            .then(startServer);
     }
 });
 
-// make sure live.db exists
-// then start server
+const connectToDatabase = () => {
+    return new Promise( resolve => {
+        dao = new AppDAO(LIVE_DB_PATH);
+        eventModel = new EventModel(dao);
+        resolve();
+    });
+};
+
+const copyFile = (source, target) => {
+    const rd = fs.createReadStream(source);
+    const wr = fs.createWriteStream(target);
+    return new Promise( (resolve, reject) => {
+        rd.on('error', reject);
+        wr.on('error', reject);
+        wr.on('finish', resolve);
+        rd.pipe(wr);
+    }).catch( error => {
+        rd.destroy();
+        wr.end();
+        throw error;
+    });
+};
+
 
 const startServer = () => {
     http.createServer((request, response) => {
@@ -63,10 +90,11 @@ const startServer = () => {
 
 function broadcast({
     event = EVENTS.UNKNOWN,
-    data = `This is event ${globalCounter}`
+    data,
+    id
 } = {}) {
     const message = serializeMessage({
-        id: globalCounter,
+        id,
         event,
         data
     });
@@ -76,7 +104,6 @@ function broadcast({
             clients[clientId].write(message);
             console.log('sent update to id: ' + clientId);
         });
-    globalCounter++;
 }
 
 function addClient(request, response) {
@@ -90,7 +117,7 @@ function addClient(request, response) {
     }));
 
     clients[clientId] = response;
-    broadcast({
+    handleEvent({
         event: EVENTS.USER_JOIN,
         data: {
             name: clientId,
@@ -149,17 +176,22 @@ function unknownEndpoint(request, response) {
 }
 
 function handleEvent(data, response) {
-    switch (data.event) {
-        case EVENTS.START_TYPING:
-            break;
-        case EVENTS.NEW_MESSAGE:
-            broadcast({
-                event: data.event,
-                data: data.data
-            });
-            response.writeHead(200, Object.assign({}, CORS_HEADERS));
-            response.end();
-            break;
-        default:
-    }
+    eventModel.create({
+        type: data.event,
+        data: data.data
+    }).then( res => {
+        switch (res.event) {
+            case EVENTS.USER_JOIN:
+                broadcast(res);
+                break;
+            case EVENTS.START_TYPING:
+                break;
+            case EVENTS.NEW_MESSAGE:
+                broadcast(res);
+                response.writeHead(200, Object.assign({}, CORS_HEADERS));
+                response.end();
+                break;
+            default:
+        }
+    });
 }

@@ -31,7 +31,8 @@ class ChatApp extends Component {
                 { name: 'John', id: 5 },
             ],
             connected: false,
-            stream: null
+            stream: null,
+            lastEventId: -1
         };
     }
 
@@ -47,10 +48,18 @@ class ChatApp extends Component {
             });
         };
 
+        feed.onerror = () => {
+            chatApp.setState({
+                connected: false,
+                usersOnline: chatApp.state.usersOnline.filter( user => user.id !== chatApp.state.id),
+            });
+        };
+
         feed.addEventListener(EVENTS.NEW_MESSAGE, evt => {
             chatApp.setState({
                 messages: chatApp.state.messages.concat(evt.data),
-                connected: true
+                connected: true,
+                lastEventId: evt.lastEventId
             });
         });
 
@@ -58,7 +67,8 @@ class ChatApp extends Component {
             const newUser = JSON.parse(evt.data);
             chatApp.setState({
                 usersOnline: chatApp.state.usersOnline.concat(newUser),
-                connected: true
+                connected: true,
+                lastEventId: evt.lastEventId
             });
         });
 
@@ -66,7 +76,8 @@ class ChatApp extends Component {
             const loggedOutUser = JSON.parse(evt.data);
             chatApp.setState({
                 usersOnline: chatApp.state.usersOnline.filter( user => user.id !== loggedOutUser.id),
-                connected: true
+                connected: true,
+                lastEventId: evt.lastEventId
             });
         });
 
