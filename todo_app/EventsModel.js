@@ -15,27 +15,35 @@ class EventsModel {
         return this.dao.all(`SELECT * FROM ${tableName}`);
     }
 
+    getLastMessages() {
+        const lastMessagesSQL = `SELECT * FROM ${tableName} WHERE event_type = 'NEW_MESSAGE' ORDER BY event_id DESC LIMIT 10`;
+        return this.dao.all(lastMessagesSQL)
+            .then( messages => messages.map(EventsModel.serializeEvent) );
+    }
+
+    static serializeEvent({
+        event_type: event,
+        event_id: id,
+        event_data
+    }) {
+        let data;
+        try {
+            data = JSON.parse(event_data);
+        } catch(e) {
+            data = event_data;
+        }
+        return {
+            event,
+            data,
+            id
+        };
+    }
+
     getEventByTypeData(params) {
         const getSQL = `SELECT * FROM ${tableName} WHERE event_type = ? AND event_data = ?`;
         return this.dao
             .get(getSQL, params)
-            .then( ({
-                event_type: event,
-                event_id: id,
-                event_data,
-            }) => {
-                let data;
-                try {
-                    data = JSON.parse(event_data);
-                } catch(e) {
-                    data = event_data;
-                }
-                return {
-                    event,
-                    data,
-                    id
-                };
-            });
+            .then(EventsModel.serializeEvent);
     }
 
     create({

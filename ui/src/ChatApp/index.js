@@ -18,21 +18,12 @@ class ChatApp extends Component {
         super(props);
         this.state = {
             id: guid(),
-            messages: [
-                'abc',
-                'hi',
-                'dummy data'
-            ],
+            messages: [ ],
             newMessage: '',
-            usersOnline: [
-                { name: 'Matt', id: 2 },
-                { name: 'Mark', id: 3 },
-                { name: 'Luke', id: 4 },
-                { name: 'John', id: 5 },
-            ],
+            usersOnline: [ ],
             connected: false,
             stream: null,
-            lastEventId: -1
+            lastMessageId: -1
         };
     }
 
@@ -51,16 +42,18 @@ class ChatApp extends Component {
         feed.onerror = () => {
             chatApp.setState({
                 connected: false,
-                usersOnline: chatApp.state.usersOnline.filter( user => user.id !== chatApp.state.id),
+                usersOnline: []
             });
         };
 
         feed.addEventListener(EVENTS.NEW_MESSAGE, evt => {
-            chatApp.setState({
-                messages: chatApp.state.messages.concat(evt.data),
-                connected: true,
-                lastEventId: evt.lastEventId
-            });
+            if (evt.lastEventId > chatApp.state.lastMessageId) {
+                chatApp.setState({
+                    messages: chatApp.state.messages.concat(evt.data),
+                    connected: true,
+                    lastMessageId: +evt.lastEventId
+                });
+            }
         });
 
         feed.addEventListener(EVENTS.USER_JOIN, evt => {
@@ -68,7 +61,6 @@ class ChatApp extends Component {
             chatApp.setState({
                 usersOnline: chatApp.state.usersOnline.concat(newUser),
                 connected: true,
-                lastEventId: evt.lastEventId
             });
         });
 
@@ -77,7 +69,6 @@ class ChatApp extends Component {
             chatApp.setState({
                 usersOnline: chatApp.state.usersOnline.filter( user => user.id !== loggedOutUser.id),
                 connected: true,
-                lastEventId: evt.lastEventId
             });
         });
 

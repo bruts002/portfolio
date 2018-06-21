@@ -102,6 +102,14 @@ function shareAllUsers(response) {
         });
 }
 
+function shareLastMessages(response) {
+    eventModel.getLastMessages()
+        .then( messages => messages
+            .sort( (a,b) => a.id - b.id)
+            .map(serializeMessage)
+            .forEach( message => response.write(message)));
+}
+
 function broadcast({
     event = EVENTS.UNKNOWN,
     data,
@@ -131,7 +139,7 @@ function addClient(request, response) {
     }));
 
     shareAllUsers(response);
-    // TODO: send ten last messages
+    shareLastMessages(response);
     clients[clientId] = response;
 
     handleEvent({
