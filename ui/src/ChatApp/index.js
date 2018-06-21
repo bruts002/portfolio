@@ -106,12 +106,13 @@ class ChatApp extends Component {
         const {
             messages,
             newMessage,
-            usersOnline
+            usersOnline,
+            connected,
         } = this.state;
         return (
             <div className="chat-app">
                 <div className="chat-app__main">
-                    <div className="chat-app__messages-container">
+                    <div className={`chat-app__messages-container ${connected ? '' : 'chat-app__messages-container--disconnected'}`}>
                         <h6>Messages</h6>
                         {messages.map( (message,i) => <div key={i}>{message}</div>)}
                     </div>
