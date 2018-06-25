@@ -3,27 +3,23 @@ const fs = require('fs');
 const { parse } = require('querystring');
 
 const CHAT_EVENTS = require('./chatEvents');
+const config = require('./config');
 const AppDAO = require('./dao');
 let dao;
 const EventModel = require('./EventsModel');
 let eventModel;
 
-const PORT = 8080;
 let clients = {};
 
-const REACT_APP_ORIGIN = 'http://localhost:3000';
 const CORS_HEADERS = {
-    'Access-Control-Allow-Origin': REACT_APP_ORIGIN,
+    'Access-Control-Allow-Origin': config.REACT_APP_ORIGIN,
     'Access-Control-Expose-Headers': '*',
     'Access-Control-Allow-Credentials': true
 };
 
-const LIVE_DB_PATH = './data/live.db';
-const BASE_DB_PATH = './data/base.db';
-
-fs.access(LIVE_DB_PATH, err => {
+fs.access(config.LIVE_DB_PATH, err => {
     if (err) {
-        copyFile(BASE_DB_PATH, LIVE_DB_PATH)
+        copyFile(config.BASE_DB_PATH, config.LIVE_DB_PATH)
             .then(connectToDatabase)
             .then(startServer);
     } else {
@@ -34,7 +30,7 @@ fs.access(LIVE_DB_PATH, err => {
 
 const connectToDatabase = () => {
     return new Promise( resolve => {
-        dao = new AppDAO(LIVE_DB_PATH);
+        dao = new AppDAO(config.LIVE_DB_PATH);
         eventModel = new EventModel(dao);
         resolve();
     });
@@ -79,7 +75,7 @@ const startServer = () => {
                 unknownEndpoint(request, response);
                 break;
         } 
-    }).listen(PORT);
+    }).listen(config.PORT);
 };
 
 function shareAllUsers(response) {
