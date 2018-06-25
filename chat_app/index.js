@@ -2,6 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const { parse } = require('querystring');
 
+const CHAT_EVENTS = require('./chatEvents');
 const AppDAO = require('./dao');
 let dao;
 const EventModel = require('./EventsModel');
@@ -9,13 +10,6 @@ let eventModel;
 
 const PORT = 8080;
 let clients = {};
-
-const EVENTS = {
-    UNKNOWN: 'UNKNOWN',
-    NEW_MESSAGE: 'NEW_MESSAGE',
-    USER_JOIN: 'USER_JOIN',
-    USER_LEAVE: 'USER_LEAVE'
-};
 
 const REACT_APP_ORIGIN = 'http://localhost:3000';
 const CORS_HEADERS = {
@@ -97,7 +91,7 @@ function shareAllUsers(response) {
                     id: clientId,
                     name: clientId,
                 },
-                event: EVENTS.USER_JOIN
+                event: CHAT_EVENTS.USER_JOIN
             }));
         });
 }
@@ -111,7 +105,7 @@ function shareLastMessages(response) {
 }
 
 function broadcast({
-    event = EVENTS.UNKNOWN,
+    event = CHAT_EVENTS.UNKNOWN,
     data,
     id
 } = {}) {
@@ -143,7 +137,7 @@ function addClient(request, response) {
     clients[clientId] = response;
 
     handleEvent({
-        event: EVENTS.USER_JOIN,
+        event: CHAT_EVENTS.USER_JOIN,
         data: {
             name: clientId,
             id: clientId
@@ -165,7 +159,7 @@ function removeClient(id) {
     clients[id].end();
     delete clients[id];
     broadcast({
-        event: EVENTS.USER_LEAVE,
+        event: CHAT_EVENTS.USER_LEAVE,
         data: { id }
     });
 }
@@ -206,12 +200,12 @@ function handleEvent(data, response) {
         data: data.data
     }).then( res => {
         switch (res.event) {
-            case EVENTS.USER_JOIN:
+            case CHAT_EVENTS.USER_JOIN:
                 broadcast(res);
                 break;
-            case EVENTS.START_TYPING:
+            case CHAT_EVENTS.START_TYPING:
                 break;
-            case EVENTS.NEW_MESSAGE:
+            case CHAT_EVENTS.NEW_MESSAGE:
                 broadcast(res);
                 response.writeHead(200, Object.assign({}, CORS_HEADERS));
                 response.end();

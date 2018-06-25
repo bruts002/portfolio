@@ -1,0 +1,8 @@
+const CHAT_EVENTS = {
+    UNKNOWN: 'UNKNOWN',
+    NEW_MESSAGE: 'NEW_MESSAGE',
+    USER_JOIN: 'USER_JOIN',
+    USER_LEAVE: 'USER_LEAVE'
+};
+
+module.exports = CHAT_EVENTS;
