@@ -9,7 +9,8 @@ let dao;
 const EventModel = require('./EventsModel');
 let eventModel;
 
-let clients = {};
+const ClientPool = require('./clientPool');
+const clientPool = new ClientPool();
 
 fs.access(config.LIVE_DB_PATH, err => {
     if (err) {
@@ -62,7 +63,9 @@ const startServer = () => {
                 break;
             case '/publish':
                 parsePostData(request, data => {
-                    handleEvent(data, response);
+                    saveEvent(data);
+                    response.writeHead(200, Object.assign({}, config.CORS_HEADERS));
+                    response.end();
                 });
                 break;
             default:
@@ -72,97 +75,39 @@ const startServer = () => {
     }).listen(config.PORT);
 };
 
-function shareAllUsers(response) {
-    Object
-        .keys(clients)
-        .forEach( clientId => {
-            response.write(serializeMessage({
-                data: {
-                    id: clientId,
-                    name: clientId,
-                },
-                event: CHAT_EVENTS.USER_JOIN
-            }));
-        });
-}
+const shareAllUsers = clientId => Object
+    .keys(clientPool.clients)
+    .filter( clientKey => clientKey !== clientId )
+    // .map( clientKey => clientPool.publish( clientId, CHAT_EVENTS.USER_JOIN, { clientKey }));
+    .map( clientKey => clientPool.publish( clientId, Object.assign({},
+        { data: {
+            id: clientKey,
+            name: clientKey
+        }},
+        { event: CHAT_EVENTS.USER_JOIN }
+    )));
 
-function shareLastMessages(response) {
+const shareLastMessages = clientId => {
     eventModel.getLastMessages()
         .then( messages => messages
             .sort( (a,b) => a.id - b.id)
-            .map(serializeMessage)
-            .forEach( message => response.write(message)));
-}
+            // .map(serializeMessage)
+            // .map( message => clientPool.publish( clientId, CHAT_EVENTS.NEW_MESSAGE, message )));
+            .map( message => clientPool.publish( clientId, Object.assign({},
+                message,
+                { event: CHAT_EVENTS.NEW_MESSAGE }
+            ))));
 
-function broadcast({
-    event = CHAT_EVENTS.UNKNOWN,
-    data,
-    id
-} = {}) {
-    const message = serializeMessage({
-        id,
-        event,
-        data
-    });
-    Object
-        .keys(clients)
-        .forEach( clientId => {
-            clients[clientId].write(message);
-            console.log('sent update to id: ' + clientId);
-        });
-}
+};
 
-function addClient(request, response) {
+const addClient = (request, response) => {
+    clientPool.addClient(request, response);
     const clientId = request.queryParams.id;
-    console.log('opened connection. Assigned id: ' + clientId);
+    shareAllUsers(clientId);
+    shareLastMessages(clientId);
+};
 
-    response.writeHead(200, Object.assign({}, config.CORS_HEADERS, {
-        Connection: 'keep-alive',
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-    }));
-
-    shareAllUsers(response);
-    shareLastMessages(response);
-    clients[clientId] = response;
-
-    handleEvent({
-        event: CHAT_EVENTS.USER_JOIN,
-        data: {
-            name: clientId,
-            id: clientId
-        }
-    });
-
-    request.on('close', () => {
-        console.log('closed id: ' + clientId);
-        removeClient(clientId);
-    });
-
-    request.on('error', err => {
-        console.warn('Caught this error: ', err);
-        removeClient(clientId);
-    });
-}
-
-function removeClient(id) {
-    clients[id].end();
-    delete clients[id];
-    broadcast({
-        event: CHAT_EVENTS.USER_LEAVE,
-        data: { id }
-    });
-}
-
-function serializeMessage(messageObj) {
-    return Object
-        .keys(messageObj)
-        .reduce( (message, key) => {
-            return `${message}${key}: ${typeof messageObj[key] === 'object' ? JSON.stringify(messageObj[key]) : messageObj[key]}\n`;
-        }, '') + '\n';
-}
-
-function parsePostData(request, onComplete) {
+const parsePostData = (request, onComplete) => {
     let body = '';
     request.on('data', chunk => {
         body += chunk.toString();
@@ -177,30 +122,16 @@ function parsePostData(request, onComplete) {
             onComplete(data);
         }
     });
-}
+};
 
-function unknownEndpoint(request, response) {
+const unknownEndpoint = (request, response) => {
     response.writeHead(404);
     response.write('Unknown URL: ' + request.url);
-}
+};
 
-function handleEvent(data, response) {
+const saveEvent = data => {
     eventModel.create({
         type: data.event,
         data: data.data
-    }).then( res => {
-        switch (res.event) {
-            case CHAT_EVENTS.USER_JOIN:
-                broadcast(res);
-                break;
-            case CHAT_EVENTS.START_TYPING:
-                break;
-            case CHAT_EVENTS.NEW_MESSAGE:
-                broadcast(res);
-                response.writeHead(200, Object.assign({}, config.CORS_HEADERS));
-                response.end();
-                break;
-            default:
-        }
-    });
-}
+    }).then( res => clientPool.publish(ClientPool.ALL, res));
+};
