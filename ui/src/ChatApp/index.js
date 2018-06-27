@@ -126,7 +126,7 @@ class ChatApp extends Component {
                     </form>
                 </div>
                 <div className="chat-app__details">
-                    <h6>Details</h6>
+                    <h6>Users</h6>
                     <ul>
                         {usersOnline.map( (user,i) => <li key={user.id}>{user.name}</li>)}
                     </ul>
