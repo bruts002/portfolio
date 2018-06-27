@@ -11,12 +11,6 @@ let eventModel;
 
 let clients = {};
 
-const CORS_HEADERS = {
-    'Access-Control-Allow-Origin': config.REACT_APP_ORIGIN,
-    'Access-Control-Expose-Headers': '*',
-    'Access-Control-Allow-Credentials': true
-};
-
 fs.access(config.LIVE_DB_PATH, err => {
     if (err) {
         copyFile(config.BASE_DB_PATH, config.LIVE_DB_PATH)
@@ -122,7 +116,7 @@ function addClient(request, response) {
     const clientId = request.queryParams.id;
     console.log('opened connection. Assigned id: ' + clientId);
 
-    response.writeHead(200, Object.assign({}, CORS_HEADERS, {
+    response.writeHead(200, Object.assign({}, config.CORS_HEADERS, {
         Connection: 'keep-alive',
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -203,7 +197,7 @@ function handleEvent(data, response) {
                 break;
             case CHAT_EVENTS.NEW_MESSAGE:
                 broadcast(res);
-                response.writeHead(200, Object.assign({}, CORS_HEADERS));
+                response.writeHead(200, Object.assign({}, config.CORS_HEADERS));
                 response.end();
                 break;
             default:
