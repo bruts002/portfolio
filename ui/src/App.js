@@ -12,7 +12,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      app: APPS.chat
+      app: APPS.todo
     };
   }
 
