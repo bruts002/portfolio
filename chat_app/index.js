@@ -58,10 +58,10 @@ const startServer = () => {
             {};
 
         switch (url) {
-            case '/stream':
+            case '/api/chat/stream':
                 addClient(request, response);
                 break;
-            case '/publish':
+            case '/api/chat/publish':
                 parsePostData(request, data => {
                     saveEvent(data);
                     response.writeHead(200, Object.assign({}, config.CORS_HEADERS));

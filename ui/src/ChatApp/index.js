@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import guid from "../Util/guid";
 import './chatApp.css';
 
-const BASE_URL = 'http://127.0.0.1:8080/';
+const BASE_URL = '/api/chat/';
 const STREAM_URL =  `${BASE_URL}stream`;
 const PUBLISH_URL = `${BASE_URL}publish`;
 
