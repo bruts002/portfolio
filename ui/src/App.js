@@ -16,6 +16,10 @@ class App extends Component {
     };
   }
 
+  setApp(app) {
+    this.setState({ app });
+  }
+
   renderApp() {
     switch (this.state.app) {
       case APPS.todo:
@@ -29,7 +33,7 @@ class App extends Component {
   render() {
     return (
       <div className='app-container'>
-        <SideBar />
+        <SideBar setApp={app => this.setApp(app)} />
         {this.renderApp()}
       </div>
     );
