@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask
+from flask import Flask, request
+from flask_restful import Api
 
 
 def create_app(test_config=None):
@@ -10,6 +11,7 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
+    api = Api(app)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -35,5 +37,8 @@ def create_app(test_config=None):
     from . import todo_list
     app.register_blueprint(todo_list.bp)
     app.add_url_rule('/', endpoint='index')
+
+    from . import todo
+    api.add_resource(todo.TodoSimple, '/api/todo/')
 
     return app
