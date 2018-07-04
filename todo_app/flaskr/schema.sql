@@ -10,5 +10,6 @@ CREATE TABLE todo (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   list_id INTEGER NOT NULL,
   todo TEXT NOT NULL,
+  done BOOLEAN NOT NULL,
   FOREIGN KEY (list_id) REFERENCES todo_list (id)
 );
