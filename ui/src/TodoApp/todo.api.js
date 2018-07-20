@@ -1,12 +1,23 @@
-const TODO_API_URL = '/api/todo/';
+const BASE_URL = '/api/todo_app/';
+const TODO_API_URL = BASE_URL + 'todo/';
+const LIST_API_URL = BASE_URL + 'list/';
 const fetchHeaders = {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
 };
 
 export default {
-    async getTodos(listId) {
-        const resp = await fetch(`${TODO_API_URL}${listId?'?listId='+listId:''}`);
+    async createList(name) {
+        const resp = await fetch(LIST_API_URL, {
+            method: 'POST',
+            headers: fetchHeaders,
+            body: JSON.stringify({ name })
+        });
+        const data = await resp.json();
+        return data;
+    },
+    async getTodos() {
+        const resp = await fetch(TODO_API_URL);
         const data = await resp.json();
         return data;
     },
@@ -17,7 +28,7 @@ export default {
             body: JSON.stringify({todoId:id})
         });
     },
-    async saveTodo(todo, listId) {
+    async createTodo(todo, listId) {
         return await fetch(TODO_API_URL, {
             method: 'POST',
             headers: fetchHeaders,

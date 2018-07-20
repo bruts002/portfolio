@@ -35,10 +35,9 @@ def create_app(test_config=None):
     db.init_app(app)
 
     from . import todo_list
-    app.register_blueprint(todo_list.bp)
-    app.add_url_rule('/', endpoint='index')
+    api.add_resource(todo_list.TodoList, '/api/todo_app/list/')
 
     from . import todo
-    api.add_resource(todo.TodoSimple, '/api/todo/')
+    api.add_resource(todo.TodoSimple, '/api/todo_app/todo/')
 
     return app

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Todo = ({
+const TodoItem = ({
     todo,
     id,
     removeTodo,
@@ -13,4 +13,4 @@ const Todo = ({
     <span onClick={()=>removeTodo(id)}> X </span>
 </li>
 
-export default Todo
+export default TodoItem

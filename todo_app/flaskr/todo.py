@@ -5,10 +5,22 @@ from flaskr.db import get_db
 
 def serialize_todo(todo):
     return { 
-        'listId' : todo['list_id'],
         'isDone' : todo['done'] == 1,
         'todo'   : todo['todo'],
         'id'     : todo['id']
+    }
+
+def serialize_todo_list(todo_list, todos):
+    return {
+        'id'    : todo_list['id'],
+        'name'  : todo_list['list_name'],
+        'todos' : list(map(
+            serialize_todo,
+            filter(
+                lambda todo: todo['list_id'] == todo_list['id'],
+                todos
+            )
+        ))
     }
 
 class TodoSimple(Resource):
@@ -17,7 +29,13 @@ class TodoSimple(Resource):
         todos = db.execute(
             'SELECT * FROM todo'
         ).fetchall()
-        return list(map(serialize_todo, todos))
+        todo_lists = db.execute(
+            'SELECT * FROM todo_list'
+        ).fetchall()
+        return list(map(
+            lambda todo_list: serialize_todo_list(todo_list, todos),
+            todo_lists
+        ))
 
     def post(self):
         req_json = request.get_json()

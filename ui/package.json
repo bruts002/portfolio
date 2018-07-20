@@ -4,14 +4,19 @@
   "private": true,
   "dependencies": {
     "react": "^16.4.1",
-    "react-dom": "^16.4.1"
+    "react-dom": "^16.4.1",
+    "react-redux": "^5.0.7"
   },
   "devDependencies": {
     "react-scripts": "1.1.4"
   },
   "proxy": {
-    "/api/chat": { "target": "http://localhost:8080" },
-    "/api/todo": { "target": "http://localhost:5000" }
+    "/api/chat": {
+      "target": "http://localhost:8080"
+    },
+    "/api/todo_app": {
+      "target": "http://localhost:5000"
+    }
   },
   "scripts": {
     "start": "react-scripts start",
