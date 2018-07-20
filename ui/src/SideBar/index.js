@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import './sideBar.css';
-import APPS from '../App.consts';
+import { APPS } from '../App.consts';
 
 export default ({
     setApp

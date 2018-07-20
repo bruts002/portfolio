@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import { APPS } from './App.consts';
 
 import './App.css';
-import APPS from './App.consts';
 
 import ChatApp from './ChatApp';
 import TodoApp from './TodoApp';
@@ -9,31 +9,24 @@ import SideBar from './SideBar';
 
 class App extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      app: APPS.todo
-    };
-  }
-
-  setApp(app) {
-    this.setState({ app });
-  }
-
   renderApp() {
-    switch (this.state.app) {
-      case APPS.todo:
+    const { activeApp } = this.props;
+
+    switch (activeApp) {
+      case APPS.TODO:
         return <TodoApp />
-      case APPS.chat:
+      case APPS.CHAT:
       default:
         return <ChatApp />
     }
   }
 
   render() {
+    const { setActiveApp } = this.props;
+
     return (
       <div className='app-container'>
-        <SideBar setApp={app => this.setApp(app)} />
+        <SideBar setApp={setActiveApp} />
         {this.renderApp()}
       </div>
     );
