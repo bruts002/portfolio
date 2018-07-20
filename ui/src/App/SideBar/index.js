@@ -1,16 +1,21 @@
 import React from 'react';
+import { withRouter, Link } from 'react-router-dom';
 
 import './sideBar.css';
 import { APPS } from '../App.consts';
 
-export default ({
+const Sidebar = ({
     setApp
 }) => <div className='side-bar'>
     Sidebar
-    <ul>
-        {Object.keys(APPS).map( app => <li
-        onClick={() => setApp(app)}
-        >{app}</li>)}
-    </ul>
+    <div>
+        {Object.keys(APPS).map( app => (
+            <Link
+                to={'/' + APPS[app]}
+                key={app}
+            >{app}</Link>
+        ))}
+    </div>
 </div>
 
+export default withRouter(Sidebar);

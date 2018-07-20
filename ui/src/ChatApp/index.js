@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withRouter } from 'react-router-dom'
 
 import guid from "../Util/guid";
 import './chatApp.css';
@@ -136,4 +137,4 @@ class ChatApp extends Component {
     }
 }
 
-export default ChatApp;
+export default withRouter(ChatApp);

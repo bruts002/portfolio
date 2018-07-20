@@ -1,6 +1,6 @@
 export const APPS = {
-    'TODO': 'TODO',
-    'CHAT': 'CHAT'
+    'TODO': 'todo',
+    'CHAT': 'chat'
 };
 
 // ACTIONS

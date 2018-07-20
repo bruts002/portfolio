@@ -1,3 +1,4 @@
 import TodoApp from './TodoApp';
+import { withRouter } from 'react-router-dom'
 
-export default TodoApp;
+export default withRouter(TodoApp);
