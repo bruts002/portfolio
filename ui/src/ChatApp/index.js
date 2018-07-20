@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
+import { Button, Classes } from '@blueprintjs/core';
 
 import guid from "../Util/guid";
 import './chatApp.css';
@@ -122,8 +123,11 @@ class ChatApp extends Component {
                             type="text"
                             value={newMessage}
                             onChange={ e => this.updateMessage(e) }
-                            className="chat-app__message-input"/>
-                        <input type="submit" value="send" className="chat-app__message-button"/>
+                            dir="auto"
+                            className={Classes.INPUT + ' ' + Classes.INTENT_PRIMARY + " chat-app__message-input"}/>
+                        <Button type="submit">
+                            Send
+                        </Button>
                     </form>
                 </div>
                 <div className="chat-app__details">
