@@ -3,8 +3,8 @@ import { APPS } from './App.consts';
 
 import './App.css';
 
-import ChatApp from './ChatApp';
-import TodoApp from './TodoApp';
+import ChatApp from '../ChatApp';
+import TodoApp from '../TodoApp';
 import SideBar from './SideBar';
 
 class App extends Component {

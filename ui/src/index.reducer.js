@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import appReducer from './app.reducer';
+import appReducer from './App/app.reducer';
 import todoReducer from './TodoApp/todo.reducer';
 import chatReducer from './ChatApp/chat.reducer';
 
