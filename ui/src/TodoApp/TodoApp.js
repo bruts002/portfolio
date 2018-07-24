@@ -7,6 +7,7 @@ class TodoApp extends Component {
         super();
         this.state = {
             todoLists: [],
+            error: false
         };
     }
 
@@ -14,10 +15,17 @@ class TodoApp extends Component {
         this.getTodos();
     }
 
-    getTodos = () => {
-        api
-            .getTodos()
-            .then( todoLists => this.setState({ todoLists }) );
+    getTodos = async () => {
+        const result = await api.getTodos();
+        if (result.error) {
+            this.setState({
+                error: true
+            });
+        } else {
+            this.setState({
+                todoLists: result
+            });
+        }
     }
 
     removeTodo = id => {

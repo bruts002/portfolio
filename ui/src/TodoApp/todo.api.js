@@ -17,9 +17,13 @@ export default {
         return data;
     },
     async getTodos() {
-        const resp = await fetch(TODO_API_URL);
-        const data = await resp.json();
-        return data;
+        try {
+            const resp = await fetch(TODO_API_URL);
+            const data = await resp.json();
+            return data;
+        } catch (error) {
+            return { error }
+        }
     },
     async removeTodo(id) {
         return await fetch(TODO_API_URL, {
