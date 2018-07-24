@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import TodoItem from './TodoItem';
+import { Button, Classes } from '@blueprintjs/core';
 
 const style = {
     container: {
@@ -60,13 +61,20 @@ class TodoList extends Component {
                     toggleDone={toggleDone}
                 />)}
             </ul>
-            <form onSubmit={ this.createTodo } >
+            <form
+                style={{ width: '270px' }}
+                onSubmit={ this.createTodo } >
                 <input
                     type="text"
                     value={newTodo}
                     onChange={ this.updateNewTodo }
+                    dir="auto"
+                    className={ Classes.INPUT + ' ' + Classes.INTENT_PRIMARY }
+                    style={{ margin: '8px' }}
                     />
-                <input type="submit" value="save" />
+                <Button type="submit">
+                    Add
+                </Button>
             </form>
         </div>
     }

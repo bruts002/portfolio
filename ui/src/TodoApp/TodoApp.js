@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import api from './todo.api';
 import TodoList from './TodoList';
+import { Button, Classes } from '@blueprintjs/core';
 
 class TodoApp extends Component {
     constructor() {
@@ -75,9 +76,14 @@ class TodoApp extends Component {
                     type="text"
                     value={newTodoList}
                     onChange={ this.updateNewList }
+                    dir="auto"
                     name="newTodoList"
+                    className={ Classes.INPUT + ' ' + Classes.INTENT_PRIMARY }
+                    style={{ margin: '8px' }}
                     />
-                <input type="submit" value="Create" />
+                <Button type="submit">
+                    Create
+                </Button>
             </form>
             <div style={listContainerStyle}>
                 {this.state.todoLists.map( list => <TodoList 
