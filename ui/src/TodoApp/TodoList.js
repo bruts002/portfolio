@@ -51,7 +51,7 @@ class TodoList extends Component {
 
         return <div style={style.container}>
             <h4 style={style.title}>{listName}</h4>
-            <ul>
+            <div>
                 {todos.map( todo => <TodoItem 
                     key={todo.id}
                     id={todo.id}
@@ -60,7 +60,7 @@ class TodoList extends Component {
                     removeTodo={removeTodo}
                     toggleDone={toggleDone}
                 />)}
-            </ul>
+            </div>
             <form
                 style={{ width: '270px' }}
                 onSubmit={ this.createTodo } >

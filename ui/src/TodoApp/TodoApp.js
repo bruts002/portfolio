@@ -66,7 +66,8 @@ class TodoApp extends Component {
     render() {
         const { newTodoList } = this.state;
         const listContainerStyle = {
-            display: 'flex'
+            display: 'flex',
+            flexWrap: 'wrap'
         };
         return <div>
             <h2>TODO APP</h2>
