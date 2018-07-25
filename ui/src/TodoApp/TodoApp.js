@@ -3,6 +3,14 @@ import api from './todo.api';
 import TodoList from './TodoList';
 import { Button, Classes } from '@blueprintjs/core';
 
+const styles = {
+    listContainerStyle: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start'
+    }
+};
+
 class TodoApp extends Component {
     constructor() {
         super();
@@ -74,12 +82,8 @@ class TodoApp extends Component {
 
     render() {
         const { newTodoList } = this.state;
-        const listContainerStyle = {
-            display: 'flex',
-            flexWrap: 'wrap'
-        };
         return <div>
-            <h2>TODO APP</h2>
+            <h2 className={Classes.HEADING}>TODO APP</h2>
             <form onSubmit={ this.createNewList } >
                 <label htmlFor="newTodoList">New List</label>
                 <input
@@ -95,7 +99,7 @@ class TodoApp extends Component {
                     Create
                 </Button>
             </form>
-            <div style={listContainerStyle}>
+            <div style={styles.listContainerStyle}>
                 {this.state.todoLists.map( list => <TodoList 
                     key={list.id}
                     listId={list.id}

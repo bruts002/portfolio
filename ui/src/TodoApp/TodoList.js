@@ -1,15 +1,12 @@
 import React, { Component } from 'react';
 import TodoItem from './TodoItem';
-import { Button, Classes } from '@blueprintjs/core';
+import { Button, Classes, Card, Elevation } from '@blueprintjs/core';
 import { Icon } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 
 const style = {
     container: {
-        margin: '10px',
-        padding: '5px',
-        border: '1px solid lightgray',
-        borderRadius: '5px',
+        margin: '10px 5px',
         width: '300px'
     },
     title: {
@@ -61,7 +58,9 @@ class TodoList extends Component {
             removeList
         } = this.props;
 
-        return <div style={style.container}>
+        return <Card
+            elevation={Elevation.THREE}
+            style={style.container}>
             <h3
                 className={Classes.HEADING}
                 style={style.title}>
@@ -98,7 +97,7 @@ class TodoList extends Component {
                     Add
                 </Button>
             </form>
-        </div>
+        </Card>
     }
 }
 
