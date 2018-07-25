@@ -35,10 +35,14 @@ class TodoApp extends Component {
             .then( () => this.getTodos() );
     }
 
-    toggleDone = (id, isDone) => {
-        api
-            .toggleDone(id, isDone)
-            .then( () => this.getTodos() );
+    updateTodo = async (todo, id) => {
+        await api.updateTodo(id, undefined, todo);
+        this.getTodos();
+    }
+
+    toggleDone = async (id, isDone) => {
+        await api.updateTodo(id, isDone)
+        this.getTodos();
     }
 
     createTodo = (todo, listId) => {
@@ -99,6 +103,7 @@ class TodoApp extends Component {
                     todos={list.todos}
                     createTodo={this.createTodo}
                     removeTodo={this.removeTodo}
+                    updateTodo={this.updateTodo}
                     toggleDone={this.toggleDone}
                     removeList={this.removeList}
                 />)}

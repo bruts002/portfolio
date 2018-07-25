@@ -63,20 +63,41 @@ class TodoSimple(Resource):
     def put(self):
         req_json = request.get_json()
         todo_id = req_json['id']
-        done = req_json['isDone']
+        try:
+            done = req_json['isDone']
+        except (KeyError):
+            done = None
+        try:
+            todo_name = req_json['todo']
+        except (KeyError):
+            todo_name = None
+
         error = None
 
         if not todo_id:
             error = ' id is required'
-        if done is None:
-            error = ' done is required'
+        if done is None and todo_name is None:
+            error = 'atleast isDone or todo is required'
         if error is not None:
             return error
         else:
+            sql_query = 'UPDATE todo set '
+            sql_params = []
+            if done is not None:
+                sql_query += 'done = ? '
+                sql_params.append(done)
+                if todo_name is not None:
+                    sql_query += ', '
+            if todo_name is not None:
+                sql_query += 'todo = ? '
+                sql_params.append(todo_name)
+            sql_query += 'WHERE id = ?'
+            sql_params.append(todo_id)
+
             db = get_db()
             db.execute(
-                'UPDATE todo set done = ? WHERE id = ?',
-                [done, todo_id]
+                sql_query,
+                sql_params
             )
             db.commit()
             return 'updated todo'

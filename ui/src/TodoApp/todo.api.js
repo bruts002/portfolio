@@ -39,11 +39,18 @@ export default {
             body: JSON.stringify({ todo, listId })
         });
     },
-    async toggleDone(id, isDone) {
+    async updateTodo(id, isDone, todo) {
+        const body = { id }
+        if (isDone !== undefined) {
+            body.isDone = isDone
+        }
+        if (todo) {
+            body.todo = todo
+        }
         return await fetch(TODO_API_URL, {
             method: 'PUT',
             headers: fetchHeaders,
-            body: JSON.stringify({ id, isDone })
+            body: JSON.stringify(body)
         });
     },
     async removeList(id) {

@@ -9,7 +9,8 @@ const style = {
         margin: '10px',
         padding: '5px',
         border: '1px solid lightgray',
-        borderRadius: '5px'
+        borderRadius: '5px',
+        width: '300px'
     },
     title: {
         margin: 0,
@@ -55,6 +56,7 @@ class TodoList extends Component {
             name: listName='New List',
             // actions
             removeTodo,
+            updateTodo,
             toggleDone,
             removeList
         } = this.props;
@@ -77,6 +79,7 @@ class TodoList extends Component {
                     todo={todo.todo}
                     isDone={todo.isDone}
                     removeTodo={removeTodo}
+                    updateTodo={updateTodo}
                     toggleDone={toggleDone}
                 />)}
             </div>
