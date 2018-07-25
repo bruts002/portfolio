@@ -39,11 +39,23 @@ class TodoItem extends React.Component {
         this.setState({ editedTodo });
     }
 
+    updateTodo = () => {
+        const {
+            id,
+            updateTodo,
+            todo
+        } = this.props;
+        const { editedTodo } = this.state;
+
+        if (todo !== editedTodo) {
+            updateTodo(editedTodo, id);
+        }
+    }
+
     render() {
         const {
             id,
             removeTodo,
-            updateTodo,
             toggleDone,
             isDone
         } = this.props;
@@ -61,7 +73,7 @@ class TodoItem extends React.Component {
                 <EditableText
                     onChange={ this.updateEditedTodo }
                     value={editedTodo}
-                    onConfirm={ () => updateTodo(editedTodo, id) }
+                    onConfirm={ this.updateTodo }
                     multiline={true}
                     />
                 <Icon
