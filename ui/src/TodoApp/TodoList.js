@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import TodoItem from './TodoItem';
 import { Button, Classes } from '@blueprintjs/core';
+import { Icon } from '@blueprintjs/core';
+import { IconNames } from '@blueprintjs/icons';
 
 const style = {
     container: {
@@ -10,7 +12,14 @@ const style = {
         borderRadius: '5px'
     },
     title: {
-        margin: 0
+        margin: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    remove: {
+        margin: '0 5px',
+        cursor: 'pointer'
     }
 };
 
@@ -37,20 +46,30 @@ class TodoList extends Component {
         });
     }
 
-
     render() {
         const { newTodo } = this.state;
         const {
             // data
             todos,
+            listId,
             name: listName='New List',
             // actions
             removeTodo,
-            toggleDone
+            toggleDone,
+            removeList
         } = this.props;
 
         return <div style={style.container}>
-            <h4 style={style.title}>{listName}</h4>
+            <h3
+                className={Classes.HEADING}
+                style={style.title}>
+                {listName}
+                <Icon
+                    style={style.remove}
+                    onClick={ () => removeList(listId) }
+                    icon={IconNames.DELETE}
+                    iconSize={Icon.SIZE_STANDARD} />
+            </h3>
             <div>
                 {todos.map( todo => <TodoItem 
                     key={todo.id}

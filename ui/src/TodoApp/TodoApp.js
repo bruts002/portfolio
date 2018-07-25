@@ -63,6 +63,11 @@ class TodoApp extends Component {
         });
     }
 
+    removeList = async (id) => {
+        await api.removeList(id);
+        this.getTodos();
+    }
+
     render() {
         const { newTodoList } = this.state;
         const listContainerStyle = {
@@ -95,6 +100,7 @@ class TodoApp extends Component {
                     createTodo={this.createTodo}
                     removeTodo={this.removeTodo}
                     toggleDone={this.toggleDone}
+                    removeList={this.removeList}
                 />)}
             </div>
         </div>

@@ -45,5 +45,12 @@ export default {
             headers: fetchHeaders,
             body: JSON.stringify({ id, isDone })
         });
+    },
+    async removeList(id) {
+        return await fetch(LIST_API_URL, {
+            method: 'DELETE',
+            headers: fetchHeaders,
+            body: JSON.stringify({ id })
+        });
     }
 };
