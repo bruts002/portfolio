@@ -6,6 +6,8 @@ import {
     Card,
     Elevation,
     EditableText,
+    InputGroup,
+    Intent,
 } from '@blueprintjs/core';
 import { Icon } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
@@ -24,6 +26,12 @@ const style = {
     remove: {
         margin: '0 5px',
         cursor: 'pointer'
+    },
+    form: {
+        width: '270px',
+        display: 'flex',
+        marginTop: '20px',
+        justifyContent: 'space-around'
     }
 };
 
@@ -67,7 +75,6 @@ class TodoList extends Component {
         const {
             listId,
             name,
-            updateListName
         } = this.props;
         const { editedListName } = this.state;
 
@@ -121,16 +128,13 @@ class TodoList extends Component {
                 />)}
             </div>
             <form
-                style={{ width: '270px' }}
+                style={style.form}
                 onSubmit={ this.createTodo } >
-                <input
-                    type="text"
-                    value={newTodo}
+                <InputGroup
+                    intent={Intent.PRIMARY}
                     onChange={ this.updateNewTodo }
-                    dir="auto"
-                    className={ Classes.INPUT + ' ' + Classes.INTENT_PRIMARY }
-                    style={{ margin: '8px' }}
-                    />
+                    value={newTodo}
+                />
                 <Button type="submit">
                     Add
                 </Button>
