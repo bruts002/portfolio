@@ -80,6 +80,11 @@ class TodoApp extends Component {
         this.getTodos();
     }
 
+    updateList = async (id, name) => {
+        await api.updateList(id, name);
+        this.getTodos();
+    }
+
     render() {
         const { newTodoList } = this.state;
         return <div>
@@ -110,6 +115,7 @@ class TodoApp extends Component {
                     updateTodo={this.updateTodo}
                     toggleDone={this.toggleDone}
                     removeList={this.removeList}
+                    updateListName={this.updateList}
                 />)}
             </div>
         </div>

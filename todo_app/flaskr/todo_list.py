@@ -55,7 +55,7 @@ class TodoList(Resource):
         else:
             db = get_db()
             db.execute(
-                'UPDATE todo_list set name = ? WHERE id = ?',
+                'UPDATE todo_list set list_name = ? WHERE id = ?',
                 [list_name, list_id]
             )
             db.commit()

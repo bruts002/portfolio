@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import TodoItem from './TodoItem';
-import { Button, Classes, Card, Elevation } from '@blueprintjs/core';
+import {
+    Button,
+    Classes,
+    Card,
+    Elevation,
+    EditableText,
+} from '@blueprintjs/core';
 import { Icon } from '@blueprintjs/core';
 import { IconNames } from '@blueprintjs/icons';
 
@@ -22,11 +28,20 @@ const style = {
 };
 
 class TodoList extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            todos: []
+            todos: [],
+            editedListName: props.name
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.name !== this.props.name) {
+            this.setState({
+                editedListName: nextProps.name
+            });
+        }
     }
 
     createTodo = event => {
@@ -44,18 +59,37 @@ class TodoList extends Component {
         });
     }
 
+    updateEditedListName = editedListName => {
+        this.setState({ editedListName })
+    }
+
+    updateListName = () => {
+        const {
+            listId,
+            name,
+            updateListName
+        } = this.props;
+        const { editedListName } = this.state;
+
+        if (editedListName !== name) {
+            this.props.updateListName(editedListName, listId)
+        }
+    }
+
     render() {
-        const { newTodo } = this.state;
+        const {
+            newTodo,
+            editedListName,
+        } = this.state;
         const {
             // data
             todos,
             listId,
-            name: listName='New List',
             // actions
             removeTodo,
             updateTodo,
             toggleDone,
-            removeList
+            removeList,
         } = this.props;
 
         return <Card
@@ -64,7 +98,11 @@ class TodoList extends Component {
             <h3
                 className={Classes.HEADING}
                 style={style.title}>
-                {listName}
+                <EditableText
+                    onChange={ this.updateEditedListName }
+                    value={editedListName}
+                    onConfirm={this.updateListName}
+                    />
                 <Icon
                     style={style.remove}
                     onClick={ () => removeList(listId) }
