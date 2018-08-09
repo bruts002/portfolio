@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import api from './todo.api';
 import TodoList from './TodoList';
 import { Button, Classes } from '@blueprintjs/core';
 
