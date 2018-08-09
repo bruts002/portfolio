@@ -27,9 +27,12 @@ class TodoApp extends Component {
         event.preventDefault();
         event.stopPropagation();
         const { createList } = this.props;
+        const { newTodoList } = this.state;
 
-        await createList( this.state.newTodoList );
-        this.setState({ newTodoList: '' });
+        if (newTodoList) {
+            await createList( newTodoList );
+            this.setState({ newTodoList: '' });
+        }
     }
 
     updateNewList = event => {
@@ -63,7 +66,7 @@ class TodoApp extends Component {
                     className={ Classes.INPUT + ' ' + Classes.INTENT_PRIMARY }
                     style={{ margin: '8px' }}
                     />
-                <Button type="submit">
+                <Button type="submit" disabled={!newTodoList} >
                     Create
                 </Button>
             </form>
