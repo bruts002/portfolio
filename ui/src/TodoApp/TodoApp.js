@@ -12,12 +12,11 @@ const styles = {
 };
 
 class TodoApp extends Component {
-    constructor() {
-        super();
-        this.state = {
-            todoLists: [],
-            error: false
-        };
+
+    state = {
+        newTodoList: '',
+        todoLists: [],
+        error: false
     }
 
     componentDidMount() {
