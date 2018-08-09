@@ -79,7 +79,7 @@ class TodoList extends Component {
         const { editedListName } = this.state;
 
         if (editedListName !== name) {
-            this.props.updateListName(editedListName, listId)
+            this.props.updateListName(listId, editedListName)
         }
     }
 

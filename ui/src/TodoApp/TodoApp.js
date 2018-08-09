@@ -20,52 +20,16 @@ class TodoApp extends Component {
     }
 
     componentDidMount() {
-        this.getTodos();
+        this.props.onMount();
     }
 
-    getTodos = async () => {
-        const result = await api.getTodos();
-        if (result.error) {
-            this.setState({
-                error: true
-            });
-        } else {
-            this.setState({
-                todoLists: result
-            });
-        }
-    }
-
-    removeTodo = id => {
-        api
-            .removeTodo(id)
-            .then( () => this.getTodos() );
-    }
-
-    updateTodo = async (todo, id) => {
-        await api.updateTodo(id, undefined, todo);
-        this.getTodos();
-    }
-
-    toggleDone = async (id, isDone) => {
-        await api.updateTodo(id, isDone)
-        this.getTodos();
-    }
-
-    createTodo = (todo, listId) => {
-        return api
-            .createTodo( todo, listId )
-            .then( () => this.getTodos() );
-
-    }
-
-    createNewList = event => {
+    createNewList = async event => {
         event.preventDefault();
         event.stopPropagation();
-        api
-            .createList( this.state.newTodoList )
-            .then( () => this.setState({ newTodoList: '' }))
-            .then( () => this.getTodos() );
+        const { createList } = this.props;
+
+        await createList( this.state.newTodoList );
+        this.setState({ newTodoList: '' });
     }
 
     updateNewList = event => {
@@ -74,18 +38,18 @@ class TodoApp extends Component {
         });
     }
 
-    removeList = async (id) => {
-        await api.removeList(id);
-        this.getTodos();
-    }
-
-    updateList = async (id, name) => {
-        await api.updateList(id, name);
-        this.getTodos();
-    }
-
     render() {
         const { newTodoList } = this.state;
+        const {
+            todoLists,
+            createTodo,
+            removeTodo,
+            updateTodo,
+            toggleDone,
+            removeList,
+            updateList,
+        } = this.props;
+
         return <div>
             <h2 className={Classes.HEADING}>TODO APP</h2>
             <form onSubmit={ this.createNewList } >
@@ -104,17 +68,17 @@ class TodoApp extends Component {
                 </Button>
             </form>
             <div style={styles.listContainerStyle}>
-                {this.state.todoLists.map( list => <TodoList 
+                {todoLists.map( list => <TodoList 
                     key={list.id}
                     listId={list.id}
                     name={list.name}
                     todos={list.todos}
-                    createTodo={this.createTodo}
-                    removeTodo={this.removeTodo}
-                    updateTodo={this.updateTodo}
-                    toggleDone={this.toggleDone}
-                    removeList={this.removeList}
-                    updateListName={this.updateList}
+                    createTodo={createTodo}
+                    removeTodo={removeTodo}
+                    updateTodo={updateTodo}
+                    toggleDone={toggleDone}
+                    removeList={removeList}
+                    updateListName={updateList}
                 />)}
             </div>
         </div>
