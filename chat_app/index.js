@@ -75,6 +75,12 @@ const startServer = () => {
     }).listen(config.PORT);
 };
 
+const rejectSubscriber = (response, error='Unable to subscribe') => {
+    response.writeHead(200, Object.assign({}, config.CORS_HEADERS));
+    response.write(error);
+    response.end();
+};
+
 const shareAllUsers = clientId => Object
     .keys(clientPool.clients)
     .filter( clientKey => clientKey !== clientId )
@@ -101,10 +107,14 @@ const shareLastMessages = clientId => {
 };
 
 const addClient = (request, response) => {
-    clientPool.addClient(request, response);
-    const clientId = request.queryParams.id;
-    shareAllUsers(clientId);
-    shareLastMessages(clientId);
+    const added = clientPool.addClient(request, response);
+    if (added) {
+        const clientId = request.queryParams.id;
+        shareAllUsers(clientId);
+        shareLastMessages(clientId);
+    } else {
+        rejectSubscriber(response)
+    }
 };
 
 const parsePostData = (request, onComplete) => {

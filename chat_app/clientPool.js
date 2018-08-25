@@ -45,8 +45,12 @@ class ClientPool {
 
     addClient(request, response) {
         const clientId = request.queryParams.id;
+        if (this.clients[clientId]) {
+            return false;
+        }
         console.log('opened connection. Assigned id: ' + clientId);
 
+        request.socket.setTimeout(Number.MAX_VALUE);
         response.writeHead(200, Object.assign({}, config.CORS_HEADERS, {
             Connection: 'keep-alive',
             'Content-Type': 'text/event-stream',
@@ -73,11 +77,14 @@ class ClientPool {
             console.warn('Caught this error: ', err);
             _this.removeClient(clientId);
         });
+        return true;
     }
 
     removeClient(clientId) {
-        this.clients[clientId].end();
-        delete this.clients[clientId];
+        if (this.clients[clientId]) {
+            this.clients[clientId].end();
+            delete this.clients[clientId];
+        }
         this.publish(ClientPool.ALL, {
             event: CHAT_EVENTS.USER_LEAVE,
             data: { id: clientId }
