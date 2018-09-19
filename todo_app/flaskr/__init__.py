@@ -11,6 +11,7 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
+    app.config.from_envvar('CONFIG_FILE')
     api = Api(app)
 
     if test_config is None:
