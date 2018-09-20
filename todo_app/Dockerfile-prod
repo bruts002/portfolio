@@ -1,0 +1,18 @@
+FROM python:3.6
+
+WORKDIR /app
+ADD . /app
+
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
+RUN pip install wheel
+RUN python setup.py bdist_wheel
+RUN pip install dist/flaskr-0.1.0-py3-none-any.whl
+# ENV FLASK_APP flaskr
+ENV FLASK_ENV production
+ENV CONFIG_FILE /app/config.prod.py
+# RUN flask init-db
+RUN pip install waitress
+# RUN waitress-serve --call flaskr:create_app
+CMD ["waitress-serve", "--call", "flaskr:create_app"]
+
+EXPOSE 8080
