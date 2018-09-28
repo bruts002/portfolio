@@ -5,6 +5,11 @@ from flask_restful import Api
 
 
 def create_app(test_config=None):
+    # TODO: unit tests
+    # TODO: ORM?
+    # TODO: Redis (some in memory cache)
+    # TODO: Celery (task-queue)
+    #   -- share across deployments
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
