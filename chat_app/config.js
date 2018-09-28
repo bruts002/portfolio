@@ -1,15 +1,11 @@
-const REACT_APP_ORIGIN = 'http://localhost:3000';
+const PORT = process.env.port || 8080;
+const DATA_BASE_PATH = process.env.DB_PATH || './data/live.db';
+const BASE_DB_PATH = './data/base.db';
 
 const config = {
-    PORT: 8080,
-    REACT_APP_ORIGIN,
-    LIVE_DB_PATH: './data/live.db',
-    BASE_DB_PATH: './data/base.db',
-    CORS_HEADERS: {
-        'Access-Control-Allow-Origin': REACT_APP_ORIGIN,
-        'Access-Control-Expose-Headers': '*',
-        'Access-Control-Allow-Credentials': true
-    },
+    PORT,
+    DATA_BASE_PATH,
+    BASE_DB_PATH
 };
 
 module.exports = config;

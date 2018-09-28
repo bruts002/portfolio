@@ -1,5 +1,4 @@
 const http = require('http');
-const fs = require('fs');
 const { parse } = require('querystring');
 
 const CHAT_EVENTS = require('./chatEvents');
@@ -12,40 +11,13 @@ let eventModel;
 const ClientPool = require('./clientPool');
 const clientPool = new ClientPool();
 
-fs.access(config.LIVE_DB_PATH, err => {
-    if (err) {
-        copyFile(config.BASE_DB_PATH, config.LIVE_DB_PATH)
-            .then(connectToDatabase)
-            .then(startServer);
-    } else {
-        connectToDatabase()
-            .then(startServer);
-    }
-});
-
 const connectToDatabase = () => {
     return new Promise( resolve => {
-        dao = new AppDAO(config.LIVE_DB_PATH);
+        dao = new AppDAO(config.DATA_BASE_PATH);
         eventModel = new EventModel(dao);
         resolve();
     });
 };
-
-const copyFile = (source, target) => {
-    const rd = fs.createReadStream(source);
-    const wr = fs.createWriteStream(target);
-    return new Promise( (resolve, reject) => {
-        rd.on('error', reject);
-        wr.on('error', reject);
-        wr.on('finish', resolve);
-        rd.pipe(wr);
-    }).catch( error => {
-        rd.destroy();
-        wr.end();
-        throw error;
-    });
-};
-
 
 const startServer = () => {
     http.createServer((request, response) => {
@@ -64,7 +36,7 @@ const startServer = () => {
             case '/api/chat/publish':
                 parsePostData(request, data => {
                     saveEvent(data);
-                    response.writeHead(200, Object.assign({}, config.CORS_HEADERS));
+                    response.writeHead(200);
                     response.end();
                 });
                 break;
@@ -76,7 +48,7 @@ const startServer = () => {
 };
 
 const rejectSubscriber = (response, error='Unable to subscribe') => {
-    response.writeHead(200, Object.assign({}, config.CORS_HEADERS));
+    response.writeHead(200);
     response.write(error);
     response.end();
 };
@@ -145,3 +117,6 @@ const saveEvent = data => {
         data: data.data
     }).then( res => clientPool.publish(ClientPool.ALL, res));
 };
+
+connectToDatabase()
+    .then(startServer);

@@ -1,5 +1,4 @@
 const CHAT_EVENTS = require('./chatEvents');
-const config = require('./config');
 
 const serializeMessage = messageObj => Object
     .keys(messageObj)
@@ -51,10 +50,11 @@ class ClientPool {
         console.log('opened connection. Assigned id: ' + clientId);
 
         request.socket.setTimeout(Number.MAX_VALUE);
-        response.writeHead(200, Object.assign({}, config.CORS_HEADERS, {
+        response.writeHead(200, Object.assign({}, {
             Connection: 'keep-alive',
             'Content-Type': 'text/event-stream',
             'Cache-Control': 'no-cache',
+            'X-Accel-Buffering': 'no'
         }));
 
         this.clients[clientId] = response;
