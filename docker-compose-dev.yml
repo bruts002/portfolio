@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  ui:
+    container_name: portfolio-ui-dev
+    build:
+      context: './ui'
+      dockerfile: 'dev.Dockerfile'
+    networks:
+      - webapp
+    ports:
+      - '3000:3000'
+    volumes:
+      - './ui:/usr/src/app'
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+  # todo_app:
+  #   container_name: portfolio-todo-app-dev
+  #   build: 
+  #     context: './todo_app'
+  #     dockerfile: 'Dockerfile-prod'
+  #   networks:
+  #     - webapp
+  #   ports:
+  #     - '8080:8080'
+  #   volumes:
+  #     - './data:/db/'
+  # chat_app:
+  #   container_name: portfolio-chat-app-dev
+  #   build: 
+  #     context: './chat_app'
+  #     dockerfile: 'Dockerfile-prod'
+  #   networks:
+  #     - webapp
+  #   ports:
+  #     - '8081:8081'
+  #   volumes:
+  #     - './data:/db/'
+
+networks:
+  webapp:
+

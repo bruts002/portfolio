@@ -19,10 +19,10 @@
   },
   "proxy": {
     "/api/chat": {
-      "target": "http://localhost:8080"
+      "target": "http://localhost:8081"
     },
     "/api/todo_app": {
-      "target": "http://localhost:5000"
+      "target": "http://localhost:8080"
     }
   },
   "scripts": {

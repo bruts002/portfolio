@@ -25,7 +25,7 @@
 .chat-app__message-form {
     display: flex;
     flex: 0 0 30px;
-    padding: 5px;
+    margin: 5px;
 }
 
 .chat-app__message-input {
