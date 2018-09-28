@@ -45,6 +45,7 @@ const startServer = () => {
                 break;
         } 
     }).listen(config.PORT);
+    console.log(`Chat Server started on port: ${config.PORT}`);
 };
 
 const rejectSubscriber = (response, error='Unable to subscribe') => {
