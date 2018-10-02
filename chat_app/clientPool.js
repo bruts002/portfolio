@@ -6,6 +6,8 @@ const serializeMessage = messageObj => Object
         return `${message}${key}: ${typeof messageObj[key] === 'object' ? JSON.stringify(messageObj[key]) : messageObj[key]}\n`;
     }, '') + '\n';
 
+const cacheControl = process.env.NODE_ENV === 'development' ? 'no-transform' : 'no-cache';
+
 class ClientPool {
 
     constructor() {
@@ -53,7 +55,7 @@ class ClientPool {
         response.writeHead(200, Object.assign({}, {
             Connection: 'keep-alive',
             'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
+            'Cache-Control': cacheControl,
             'X-Accel-Buffering': 'no'
         }));
 

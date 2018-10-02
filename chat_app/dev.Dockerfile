@@ -5,6 +5,7 @@ COPY package.json /app
 RUN npm install
 COPY . /app
 ENV DB_PATH /db/chat_app.db
+ENV NODE_ENV development
 ENV PORT 8081
 EXPOSE ${PORT}
 CMD ["npm", "start"]
