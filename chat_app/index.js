@@ -4,20 +4,38 @@ const { parse } = require('querystring');
 const CHAT_EVENTS = require('./chatEvents');
 const config = require('./config');
 const AppDAO = require('./dao');
-let dao;
 const EventModel = require('./EventsModel');
 let eventModel;
 
 const ClientPool = require('./clientPool');
 const clientPool = new ClientPool();
 
-const connectToDatabase = () => {
-    return new Promise( resolve => {
-        dao = new AppDAO(config.DATA_BASE_PATH);
-        eventModel = new EventModel(dao);
-        resolve();
-    });
-};
+const LOG_LEVELS = {
+    DEBUG: 0,
+    INFO: 1,
+    WARN: 2,
+    ERROR: 3
+}
+
+// TODO: make configurable (dynamic even? ooh that would be cool)
+const logLevel = 0;
+
+// TODO: make `logger` be its own module
+const logger = {
+    log: (msg, level=LOG_LEVELS.INFO) => {
+        if (level >= logLevel) {
+            console.log(msg)
+        }
+    }
+}
+
+const connectToDatabase = () => new Promise( resolve => {
+    logger.log(`Connecting to ${config.DATA_BASE_PATH}...`, LOG_LEVELS.INFO)
+    eventModel = new EventModel(
+        new AppDAO(config.DATA_BASE_PATH)
+    );
+    resolve();
+});
 
 const startServer = () => {
     http.createServer((request, response) => {
@@ -29,6 +47,7 @@ const startServer = () => {
             parse(request.url.slice(qIndex+1)) :
             {};
 
+        logger.log(`Incoming request to: '${url}'`, LOG_LEVELS.INFO)
         switch (url) {
             case '/api/chat/stream':
                 addClient(request, response);
@@ -45,7 +64,7 @@ const startServer = () => {
                 break;
         } 
     }).listen(config.PORT);
-    console.log(`Chat Server started on port: ${config.PORT}`);
+    logger.log(`Chat Server started on port: ${config.PORT}`, LOG_LEVELS.INFO);
 };
 
 const rejectSubscriber = (response, error='Unable to subscribe') => {

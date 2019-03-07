@@ -1,7 +1,6 @@
 # https://mherman.org/blog/dockerizing-a-react-app/
 # build environment
-FROM node:9.6.1 as builder
-RUN mkdir /usr/src/app
+FROM node:10-alpine as builder
 WORKDIR /usr/src/app
 ENV PATH /usr/src/app/node_modules/.bin:$PATH
 COPY package.json /usr/src/app/package.json

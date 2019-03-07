@@ -18,7 +18,7 @@ services:
       - CHOKIDAR_USEPOLLING=true
   todo_app:
     container_name: portfolio-todo-app-dev
-    build: 
+    build:
       context: './todo_app'
       dockerfile: 'dev.Dockerfile'
     networks:
@@ -30,7 +30,7 @@ services:
       - './todo_app:/app'
   chat_app:
     container_name: portfolio-chat-app-dev
-    build: 
+    build:
       context: './chat_app'
       dockerfile: 'dev.Dockerfile'
     networks:
